@@ -29,10 +29,10 @@ jobs:
           node-version: "20"
           cache: "pnpm"
           
-      - name: Install Dependencies
+      - name: Clean and Install
         run: |
+          rm -rf build dist
           pnpm install --frozen-lockfile
-          pnpm add prop-types
         
       - name: Build
         run: pnpm run build
