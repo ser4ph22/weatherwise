@@ -1,0 +1,93 @@
+#################################################
+Project Documentation: weatherwise
+Generated: 2024-11-09 06:27:18
+#################################################
+
+PROJECT STRUCTURE
+---------------
+├── 📄 .env
+├── 📄 .gitignore
+├── 📄 eslint.config.js
+├── 📄 index.html
+├── 📄 package-lock.json
+├── 📄 package.json
+├── 📄 pnpm-lock.yaml
+├── 📄 postcss.config.js
+├── 📄 ProjectInfo.ps1
+├── 📄 README.md
+├── 📄 tailwind.config.js
+├── 📄 vite.config.js
+├── 📄 weatherwise_Structure_20241109_060014.txt
+├── 📁 public
+│   └── 📄 vite.svg
+└── 📁 src
+    ├── 📄 App.css
+    ├── 📄 App.jsx
+    ├── 📄 index.css
+    ├── 📄 main.jsx
+    ├── 📁 assets
+    │   └── 📄 react.svg
+    ├── 📁 components
+    │   ├── 📄 CurrentWeather.jsx
+    │   ├── 📄 FavoritesList.jsx
+    │   ├── 📄 ForecastCard.jsx
+    │   ├── 📄 Layout.jsx
+    │   ├── 📄 SearchBar.jsx
+    │   ├── 📄 TemperatureToggle.jsx
+    │   └── 📄 TrendsGraph.jsx
+    ├── 📁 contexts
+    │   └── 📄 WeatherContext.jsx
+    ├── 📁 hooks
+    ├── 📁 images
+    │   ├── 📄 go.png
+    │   ├── 📄 imagecenter.jpeg
+    │   ├── 📄 imageleft.jpeg
+    │   ├── 📄 imageright.jpeg
+    │   └── 📄 logo.png
+    ├── 📁 pages
+    │   ├── 📄 Home.jsx
+    │   └── 📄 WeatherDetails.jsx
+    ├── 📁 services
+    │   └── 📄 weatherApi.js
+    └── 📁 utils
+        └── 📄 formatters.js
+
+GIT INFORMATION
+--------------
+Current Branch: master
+Remote Origin: 
+
+Recent Commits:
+ - 4ab184c - ser4ph22, 34 minutes ago : Initial project setup
+
+PROJECT STATISTICS
+-----------------
+Total Files: 44
+Total Directories: 14
+Total Size: 2.00 MB
+
+File Types:
+  .jsx: 12 files
+  .js: 7 files
+  .jpeg: 6 files
+  .png: 3 files
+  .css: 3 files
+  .svg: 3 files
+  .json: 2 files
+  .html: 2 files
+  .md: 1 files
+  .txt: 1 files
+  .gitignore: 1 files
+  .ps1: 1 files
+  .env: 1 files
+  .yaml: 1 files
+
+ENVIRONMENT INFORMATION
+---------------------
+PowerShell Version: 7.4.6
+.NET Version: 8.0.400
+Node.js Version: 20.17.0
+npm Version: 10.9.0
+Git Version: 2.47.0.windows.1
+pnpm Version: 9.12.1
+
