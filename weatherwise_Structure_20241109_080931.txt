@@ -1,6 +1,6 @@
 #################################################
 Project Documentation: weatherwise
-Generated: 2024-11-09 06:27:18
+Generated: 2024-11-09 08:09:31
 #################################################
 
 PROJECT STRUCTURE
@@ -17,7 +17,6 @@ PROJECT STRUCTURE
 ├── 📄 README.md
 ├── 📄 tailwind.config.js
 ├── 📄 vite.config.js
-├── 📄 weatherwise_Structure_20241109_060014.txt
 ├── 📁 public
 │   └── 📄 vite.svg
 └── 📁 src
@@ -29,21 +28,26 @@ PROJECT STRUCTURE
     │   └── 📄 react.svg
     ├── 📁 components
     │   ├── 📄 CurrentWeather.jsx
+    │   ├── 📄 ErrorBoundary.jsx
     │   ├── 📄 FavoritesList.jsx
     │   ├── 📄 ForecastCard.jsx
     │   ├── 📄 Layout.jsx
     │   ├── 📄 SearchBar.jsx
     │   ├── 📄 TemperatureToggle.jsx
-    │   └── 📄 TrendsGraph.jsx
+    │   ├── 📄 TrendsGraph.jsx
+    │   └── 📄 WeatherHeader.jsx
     ├── 📁 contexts
     │   └── 📄 WeatherContext.jsx
     ├── 📁 hooks
+    │   └── 📄 useWeather.js
     ├── 📁 images
+    │   ├── 📄 addFavorite.png
     │   ├── 📄 go.png
     │   ├── 📄 imagecenter.jpeg
     │   ├── 📄 imageleft.jpeg
     │   ├── 📄 imageright.jpeg
-    │   └── 📄 logo.png
+    │   ├── 📄 logo.png
+    │   └── 📄 search.svg
     ├── 📁 pages
     │   ├── 📄 Home.jsx
     │   └── 📄 WeatherDetails.jsx
@@ -58,7 +62,7 @@ Current Branch: master
 Remote Origin: 
 
 Recent Commits:
- - 4ab184c - ser4ph22, 34 minutes ago : Initial project setup
+ - 19199d8 - ser4ph22, 26 seconds ago : Prepare for Azure deployment  - 4ab184c - ser4ph22, 2 hours ago : Initial project setup
 
 PROJECT STATISTICS
 -----------------
@@ -67,16 +71,15 @@ Total Directories: 14
 Total Size: 2.00 MB
 
 File Types:
-  .jsx: 12 files
-  .js: 7 files
-  .jpeg: 6 files
+  .jsx: 14 files
+  .js: 8 files
+  .svg: 4 files
   .png: 3 files
   .css: 3 files
-  .svg: 3 files
+  .jpeg: 3 files
   .json: 2 files
   .html: 2 files
   .md: 1 files
-  .txt: 1 files
   .gitignore: 1 files
   .ps1: 1 files
   .env: 1 files

@@ -1,0 +1,20 @@
+{
+    "navigationFallback": {
+      "rewrite": "/index.html",
+      "exclude": ["/images/*.{png,jpg,gif,jpeg,svg}", "/assets/*"]
+    },
+    "mimeTypes": {
+      ".json": "text/json"
+    },
+    "globalHeaders": {
+      "Content-Security-Policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: *.openweathermap.org; img-src 'self' data: https:; upgrade-insecure-requests;",
+      "cache-control": "must-revalidate, max-age=0"
+    },
+    "routes": [
+      {
+        "route": "/*",
+        "serve": "/index.html",
+        "statusCode": 200
+      }
+    ]
+  }
