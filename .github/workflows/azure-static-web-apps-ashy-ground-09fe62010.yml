@@ -43,6 +43,13 @@ jobs:
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
         run: |
           pnpm run build
+          ls -la dist
+
+      - name: Move Build Files
+        run: |
+          mv dist/* .
+          rm -rf dist node_modules
+          ls -la
           
       - name: Deploy to Azure
         id: builddeploy
@@ -53,7 +60,7 @@ jobs:
           action: "upload"
           app_location: "/"
           api_location: ""
-          output_location: "dist"
+          output_location: ""
           skip_app_build: true
           
   close_pull_request_job:
