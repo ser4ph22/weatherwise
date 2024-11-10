@@ -1,21 +1,18 @@
-import PropTypes from 'prop-types';
+import React from 'react';
+import { useWeather } from '../contexts/WeatherContext';
 
-const TemperatureToggle = ({ isCelsius, onChange }) => {
+const TemperatureToggle = () => {
+  const { unit, toggleUnit } = useWeather();
+
   return (
     <button
-      onClick={onChange}
-      className="flex items-center justify-center px-3 py-1 rounded-lg bg-blue-100 hover:bg-blue-200 transition-colors duration-200"
+      onClick={toggleUnit}
+      className="temperature-toggle"
+      aria-label={`Switch to ${unit === 'C' ? 'Fahrenheit' : 'Celsius'}`}
     >
-      <span className="text-sm font-medium text-blue-800">
-        {isCelsius ? '°C' : '°F'}
-      </span>
+      °{unit}
     </button>
   );
-};
-
-TemperatureToggle.propTypes = {
-  isCelsius: PropTypes.bool.isRequired,
-  onChange: PropTypes.func.isRequired
 };
 
 export default TemperatureToggle;

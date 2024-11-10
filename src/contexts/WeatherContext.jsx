@@ -1,6 +1,6 @@
 // src/contexts/WeatherContext.jsx
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { fetchWeatherData, fetchForecast } from '../services/weatherApi';
+import { weatherApi } from '../services/weatherApi';
 
 const WeatherContext = createContext();
 
@@ -9,6 +9,8 @@ const generateUniqueId = () => `fav-${Date.now()}-${Math.random().toString(36).s
 
 export const WeatherProvider = ({ children }) => {
   const [weatherData, setWeatherData] = useState(null);
+  const [forecast, setForecast] = useState(null);
+  const [trends, setTrends] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [unit, setUnit] = useState(() => {
@@ -94,12 +96,27 @@ export const WeatherProvider = ({ children }) => {
     });
   }, []);
 
-  const fetchWeather = useCallback(async (city) => {
+  const fetchWeatherData = useCallback(async (city) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await fetchWeatherData(city);
+
+      // Fetch current weather
+      const data = await weatherApi.getCurrentWeather(city);
       setWeatherData(data);
+      
+      // Fetch forecast data
+      const forecastData = await weatherApi.getForecast(city);
+      setForecast(forecastData.forecast.forecastday);
+
+      // Fetch historical data for trends
+      const historicalData = await weatherApi.getHistorical(city);
+      const trendData = historicalData.map(day => ({
+        time: new Date(day.forecast.forecastday[0].date).toLocaleDateString('en-US', { weekday: 'short' }),
+        temperature: unit === 'C' ? day.forecast.forecastday[0].day.avgtemp_c : day.forecast.forecastday[0].day.avgtemp_f,
+        humidity: day.forecast.forecastday[0].day.avghumidity
+      }));
+      setTrends(trendData);
       
       // Update favorite weather data if this location is in favorites
       setFavorites(prev => {
@@ -131,13 +148,13 @@ export const WeatherProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [unit]);
 
   const updateFavoriteWeather = useCallback(async (favorite) => {
     if (!favorite?.name) return;
 
     try {
-      const data = await fetchWeatherData(favorite.name);
+      const data = await weatherApi.getCurrentWeather(favorite.name);
       setFavorites(prev => {
         const updatedFavorites = prev.map(fav => {
           if (fav.id === favorite.id || 
@@ -166,11 +183,13 @@ export const WeatherProvider = ({ children }) => {
     <WeatherContext.Provider
       value={{
         weatherData,
+        forecast,
+        trends,
         loading,
         error,
         unit,
         favorites,
-        fetchWeather,
+        fetchWeather: fetchWeatherData,
         toggleUnit,
         addToFavorites,
         removeFromFavorites,
@@ -189,3 +208,5 @@ export const useWeather = () => {
   }
   return context;
 };
+
+export default WeatherContext;

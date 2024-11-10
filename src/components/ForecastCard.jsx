@@ -1,26 +1,47 @@
+import { useWeather } from '../contexts/WeatherContext';
+import { CloudDrizzle, Cloud, Sun } from 'lucide-react';
+
 const ForecastCard = () => {
-    const forecast = [
-      { day: 'Mon', icon: '☀️', temp: '70°F' },
-      { day: 'Tue', icon: '☁️', temp: '71°F' },
-      { day: 'Wed', icon: '🌧️', temp: '72°F' },
-      { day: 'Thu', icon: '☀️', temp: '73°F' },
-      { day: 'Fri', icon: '☁️', temp: '74°F' }
-    ];
-  
-    return (
-      <div className="bg-blue-50 p-6 rounded-xl">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">5-Day Forecast</h2>
-        <div className="flex justify-between">
-          {forecast.map(({ day, icon, temp }) => (
-            <div key={day} className="text-center">
-              <div className="text-gray-600 mb-2">{day}</div>
-              <div className="text-2xl mb-2">{icon}</div>
-              <div className="text-gray-800">{temp}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+  const { forecast, loading, unit } = useWeather();
+
+  const getWeatherIcon = (condition) => {
+    const conditionLower = condition?.toLowerCase() || '';
+    
+    if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
+      return <CloudDrizzle className="w-6 h-6 text-blue-400" />;
+    } else if (conditionLower.includes('sunny') || conditionLower.includes('clear')) {
+      return <Sun className="w-6 h-6 text-yellow-400" />;
+    }
+    return <Cloud className="w-6 h-6 text-gray-400" />;
   };
-  
-  export default ForecastCard;
+
+  if (!forecast || forecast.length === 0) return null;
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-6 my-6">
+      <h2 className="text-xl font-semibold mb-6">5 Day Forecast</h2>
+      <div className="space-y-4">
+        {forecast.slice(0, 5).map((day, index) => (
+          <div key={index} className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-3">
+              {getWeatherIcon(day.day.condition.text)}
+              <div className="text-lg font-medium">
+                {Math.round(unit === 'C' ? day.day.avgtemp_c : day.day.avgtemp_f)}°{unit}
+              </div>
+            </div>
+            <div className="flex flex-col items-end">
+              <div className="text-sm font-medium">
+                {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
+              </div>
+              <div className="text-sm text-gray-500">
+                {day.day.condition.text}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ForecastCard;
