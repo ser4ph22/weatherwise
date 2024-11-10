@@ -24,6 +24,7 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 9
+          run_install: false
           
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -33,7 +34,7 @@ jobs:
           
       - name: Install Dependencies
         run: |
-          pnpm install
+          pnpm install --no-frozen-lockfile
         
       - name: Build Application
         env:
@@ -43,12 +44,16 @@ jobs:
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
         run: |
           pnpm run build
-          ls -la dist
-
+          
+      - name: List Build Output
+        run: |
+          echo "Build directory contents:"
+          ls -la dist/
+          
       - name: Move Build Files
         run: |
           mv dist/* .
-          rm -rf dist node_modules
+          rm -rf dist node_modules pnpm-lock.yaml
           ls -la
           
       - name: Deploy to Azure
