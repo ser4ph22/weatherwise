@@ -9,70 +9,65 @@ on:
     branches:
       - deployment
 
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+  
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
-          lfs: false
+          fetch-depth: 0
       
+      # Setup PNPM with specific version
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+          
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
-      
-      - name: Install PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
           
+      # Force regenerate lockfile and install dependencies
       - name: Install Dependencies
         run: |
-          pnpm install --prod --no-frozen-lockfile
-        
+          rm -f pnpm-lock.yaml
+          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile
+          
+      # Add build size check
       - name: Build
+        run: |
+          pnpm run build
+          node scripts/check-build-size.js
         env:
-          NODE_ENV: production
           VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
           VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
-        run: |
-          pnpm build
-          echo "Build size:"
-          du -sh dist/
+          NODE_ENV: production
 
-      - name: Prepare for Deployment
-        run: |
-          cd dist
-          find . -type f -name "*.map" -delete
-          find . -type f -name "*.txt" -delete
-          echo "Final size:"
-          du -sh .
-          
-      - name: Deploy to Azure
-        id: builddeploy
+      - name: Deploy
+        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_GROUND_09FE62010 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "dist"
-          api_location: ""
-          output_location: ""
+          app_location: "/"
+          output_location: "dist"
+          app_artifact_location: "dist"
           skip_app_build: true
-          
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
+
       - name: Close Pull Request
-        id: closepullrequest
+        if: github.event_name == 'pull_request' && github.event.action == 'closed'
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_GROUND_09FE62010 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "close"
