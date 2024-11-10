@@ -20,7 +20,7 @@ jobs:
           submodules: true
           lfs: false
       
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20"
@@ -30,10 +30,9 @@ jobs:
         with:
           version: 9
           
-      - name: Clean and Install
+      - name: Install Dependencies
         run: |
-          rm -rf node_modules dist pnpm-lock.yaml
-          pnpm install --no-frozen-lockfile
+          pnpm install --prod --no-frozen-lockfile
         
       - name: Build
         env:
@@ -41,7 +40,18 @@ jobs:
           VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
           VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
-        run: pnpm run build
+        run: |
+          pnpm build
+          echo "Build size:"
+          du -sh dist/
+
+      - name: Prepare for Deployment
+        run: |
+          cd dist
+          find . -type f -name "*.map" -delete
+          find . -type f -name "*.txt" -delete
+          echo "Final size:"
+          du -sh .
           
       - name: Deploy to Azure
         id: builddeploy
@@ -50,9 +60,9 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_GROUND_09FE62010 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/"
+          app_location: "dist"
           api_location: ""
-          output_location: "dist"
+          output_location: ""
           skip_app_build: true
           
   close_pull_request_job:
