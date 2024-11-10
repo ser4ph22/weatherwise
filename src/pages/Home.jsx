@@ -1,26 +1,28 @@
-import { useState } from 'react';
+// src/pages/Home.jsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWeather } from '../contexts/WeatherContext';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { fetchWeather, loading, error } = useWeather();
   const [searchQuery, setSearchQuery] = useState('');
-  const { fetchLocationWeather, isLoading } = useWeather();
 
-  const handleSearch = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      try {
-        await fetchLocationWeather(searchQuery);
-        navigate('/weather');
-      } catch (error) {
-        console.error('Error fetching weather:', error);
-      }
+    if (!searchQuery.trim()) return;
+
+    try {
+      await fetchWeather(searchQuery);
+      setSearchQuery('');
+      navigate('/weather', { replace: true });
+    } catch (err) {
+      console.error('Search error:', err);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="w-full max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-900 mb-4">
         Welcome to WeatherWise
       </h1>
@@ -28,43 +30,55 @@ const Home = () => {
         Get accurate weather information for any location
       </p>
 
-      <form onSubmit={handleSearch} className="mb-8">
+      <form onSubmit={handleSubmit} className="mb-8">
         <div className="flex gap-2">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Enter city name..."
-            className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled={isLoading}
+            placeholder="Search for a city..."
+            className="flex-1 p-2 border border-gray-300 rounded-lg 
+                     focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                     disabled:bg-gray-50 disabled:cursor-not-allowed"
+            disabled={loading}
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors disabled:bg-blue-300"
-            disabled={isLoading}
+            disabled={loading || !searchQuery.trim()}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg 
+                     hover:bg-blue-600 disabled:opacity-50 
+                     disabled:cursor-not-allowed transition-colors"
           >
-            {isLoading ? 'Searching...' : 'Search'}
+            {loading ? 'Searching...' : 'Search'}
           </button>
         </div>
+        {error && (
+          <p className="mt-2 text-red-500 text-sm">{error}</p>
+        )}
       </form>
 
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-800">Quick Tips</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-medium text-blue-900">Search</h3>
-            <p className="text-blue-800">
-              Enter a city name, postal code, or coordinates
-            </p>
-          </div>
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-medium text-blue-900">Favorites</h3>
-            <p className="text-blue-800">
-              Click the + icon to save locations for quick access
-            </p>
-          </div>
+      {/* Quick Tips */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <h2 className="text-lg font-semibold mb-2">Search Tips</h2>
+          <ul className="text-gray-600 space-y-2">
+            <li>• Enter a city name (e.g., "London")</li>
+            <li>• Include country code (e.g., "Paris, FR")</li>
+            <li>• Use postal codes (e.g., "10001")</li>
+            <li>• Enter coordinates (e.g., "51.5,-0.13")</li>
+          </ul>
         </div>
-      </section>
+
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <h2 className="text-lg font-semibold mb-2">Favorites</h2>
+          <ul className="text-gray-600 space-y-2">
+            <li>• Click the + icon to save locations</li>
+            <li>• View saved locations in the sidebar</li>
+            <li>• Quick access to favorite locations</li>
+            <li>• Remove locations with one click</li>
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };

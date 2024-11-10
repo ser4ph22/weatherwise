@@ -1,3 +1,4 @@
+// App.jsx
 import { Routes, Route } from 'react-router-dom';
 import { WeatherProvider } from './contexts/WeatherContext';
 import Home from './pages/Home';
@@ -18,7 +19,7 @@ const App = () => {
               <aside className="w-64 shrink-0">
                 <FavoritesList />
               </aside>
-              
+             
               {/* Main Content Area */}
               <main className="flex-1">
                 <Routes>

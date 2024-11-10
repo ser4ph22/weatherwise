@@ -1,42 +1,65 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useWeather } from '../contexts/WeatherContext';
-import { X } from 'lucide-react';
+import { MapPin, X } from 'lucide-react';
 
 const FavoritesList = () => {
-  const { favorites, removeFromFavorites, fetchLocationWeather } = useWeather();
+  const navigate = useNavigate();
+  const { favorites, fetchWeather, loading, removeFromFavorites } = useWeather();
 
-  const handleFavoriteClick = async (location) => {
-    await fetchLocationWeather(location);
+  const handleFavoriteClick = async (favorite) => {
+    if (loading) return;
+    
+    try {
+      const searchQuery = favorite.name;
+      if (searchQuery) {
+        await fetchWeather(searchQuery);
+        navigate('/weather', { replace: true });
+      }
+    } catch (error) {
+      console.error('Error fetching favorite weather:', error);
+    }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Favorites</h2>
-      {favorites.length === 0 ? (
-        <p className="text-gray-500 text-sm">
-          No favorite locations added yet
-        </p>
+    <div className="bg-white rounded-lg shadow p-4 sticky top-20">
+      <h2 className="text-xl font-semibold mb-4">Favorites</h2>
+      {!favorites || favorites.length === 0 ? (
+        <p className="text-gray-500">No favorite locations added yet</p>
       ) : (
         <ul className="space-y-2">
-          {favorites.map((location) => (
-            <li 
-              key={location}
-              className="flex items-center justify-between group hover:bg-blue-50 rounded-md p-2 transition-colors"
+          {favorites.map((favorite) => (
+            <li
+              key={favorite.id || `${favorite.name}-${favorite.region || ''}`}
+              className="group relative flex items-center p-2 rounded-lg hover:bg-gray-50 
+                       transition-colors"
             >
-              <Link
-                to="/weather"
-                onClick={() => handleFavoriteClick(location)}
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600"
+              <div 
+                onClick={() => handleFavoriteClick(favorite)}
+                className="flex items-center flex-grow cursor-pointer"
               >
-                <span className="text-lg">☀️</span>
-                <span>{location}</span>
-              </Link>
+                <MapPin className="w-4 h-4 text-gray-400 mr-2" />
+                <div className="flex flex-col min-w-0">
+                  <span className="font-medium truncate">{favorite.name}</span>
+                  {favorite.region && (
+                    <span className="text-sm text-gray-500 truncate">
+                      {favorite.region}
+                      {favorite.country && `, ${favorite.country}`}
+                    </span>
+                  )}
+                </div>
+              </div>
+              
               <button
-                onClick={() => removeFromFavorites(location)}
-                className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity"
-                aria-label={`Remove ${location} from favorites`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeFromFavorites(favorite);
+                }}
+                className="opacity-0 group-hover:opacity-100 transition-opacity 
+                         ml-2 p-1 hover:text-red-500 rounded-full hover:bg-red-50"
+                aria-label={`Remove ${favorite.name} from favorites`}
+                disabled={loading}
               >
-                <X size={16} />
+                <X className="w-4 h-4" />
               </button>
             </li>
           ))}
