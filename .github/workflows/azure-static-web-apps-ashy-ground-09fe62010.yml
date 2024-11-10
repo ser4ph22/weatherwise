@@ -33,7 +33,7 @@ jobs:
           
       - name: Install Dependencies
         run: |
-          pnpm install --frozen-lockfile --prod
+          pnpm install
         
       - name: Build Application
         env:
@@ -41,16 +41,9 @@ jobs:
           VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
           VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
-        run: pnpm run build
-
-      - name: Prepare for Deployment
         run: |
-          mkdir deploy
-          cp -r dist/* deploy/
-          rm -rf *
-          cp -r deploy/* .
-          rm -rf deploy
-
+          pnpm run build
+          
       - name: Deploy to Azure
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -60,7 +53,7 @@ jobs:
           action: "upload"
           app_location: "/"
           api_location: ""
-          output_location: "/"
+          output_location: "dist"
           skip_app_build: true
           
   close_pull_request_job:
