@@ -29,28 +29,19 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 9
-          run_install: false
           
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-          
-      - name: Install dependencies
-        shell: bash
+      - name: Clean and Install
         run: |
           rm -rf node_modules dist pnpm-lock.yaml
           pnpm install --no-frozen-lockfile
         
-      - name: Build Application
+      - name: Build
         env:
           NODE_ENV: production
           VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
           VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
-        run: |
-          pnpm build
-          ls -la dist
+        run: pnpm run build
           
       - name: Deploy to Azure
         id: builddeploy
