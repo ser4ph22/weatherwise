@@ -33,7 +33,7 @@ jobs:
           
       - name: Install Dependencies
         run: |
-          rm -rf build dist
+          rm -rf dist
           pnpm install --frozen-lockfile
         
       - name: Build Application
@@ -52,8 +52,8 @@ jobs:
           action: "upload"
           app_location: "/"
           api_location: ""
-          output_location: "dist"  # Changed from "build" to "dist" for Vite
-          skip_app_build: true    # We're handling the build step separately
+          output_location: "dist"
+          skip_app_build: true
           
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
