@@ -1,20 +1,33 @@
 {
-    "navigationFallback": {
-      "rewrite": "/index.html",
-      "exclude": ["/images/*.{png,jpg,gif,jpeg,svg}", "/assets/*"]
-    },
-    "mimeTypes": {
-      ".json": "text/json"
-    },
-    "globalHeaders": {
-      "Content-Security-Policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: *.openweathermap.org; img-src 'self' data: https:; upgrade-insecure-requests;",
-      "cache-control": "must-revalidate, max-age=0"
-    },
-    "routes": [
-      {
-        "route": "/*",
-        "serve": "/index.html",
-        "statusCode": 200
-      }
-    ]
-  }
+  "routes": [
+    {
+      "route": "/*",
+      "serve": "/index.html",
+      "statusCode": 200
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/images/*", "/assets/*", "/*.{css,scss,js,png,gif,ico,jpg,svg}"]
+  },
+  "mimeTypes": {
+    ".json": "text/json"
+  },
+  "platform": {
+    "apiRuntime": "node:18"
+  },
+  "skipBuildDuringDeployment": true,
+  "include": [
+    "dist/**"
+  ],
+  "exclude": [
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/tests/**",
+    "**/*.test.js",
+    "**/*.spec.js",
+    "**/src/**",
+    "**/public/**",
+    "**/coverage/**"
+  ]
+}
