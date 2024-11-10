@@ -33,15 +33,15 @@ jobs:
           
       - name: Install Dependencies
         run: |
-          rm -rf dist
           pnpm install --frozen-lockfile
         
       - name: Build Application
-        run: pnpm run build
         env:
+          NODE_ENV: production
           VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
           VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
+        run: pnpm run build
 
       - name: Deploy to Azure
         id: builddeploy
@@ -54,7 +54,7 @@ jobs:
           api_location: ""
           output_location: "dist"
           skip_app_build: true
-          
+
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
