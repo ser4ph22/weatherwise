@@ -1,70 +1,71 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWeather } from '../contexts/WeatherContext';
-import { Sun, X } from 'lucide-react';
+import { MapPin, X } from 'lucide-react';
 
 const FavoritesList = () => {
   const navigate = useNavigate();
-  const { favorites, removeFromFavorites, fetchLocationWeather } = useWeather();
-  const [selectedCity, setSelectedCity] = useState(null);
+  const { favorites, fetchWeather, loading, removeFromFavorites } = useWeather();
 
-  const handleCityClick = async (city) => {
+  const handleFavoriteClick = async (favorite) => {
+    if (loading) return;
+    
     try {
-      setSelectedCity(city);
-      await fetchLocationWeather(city);
-      navigate('/weather', { replace: true });
+      const searchQuery = favorite.name;
+      if (searchQuery) {
+        await fetchWeather(searchQuery);
+        navigate('/weather', { replace: true });
+      }
     } catch (error) {
-      console.error('Error fetching weather for favorite city:', error);
-      setSelectedCity(null);
+      console.error('Error fetching favorite weather:', error);
     }
   };
 
-  const handleRemove = (e, city) => {
-    e.stopPropagation(); // Prevent triggering the city click
-    removeFromFavorites(city);
-  };
-
   return (
-    <aside className="bg-white rounded-lg shadow-sm p-4">
-      <h2 className="text-lg font-semibold mb-4">Favorites</h2>
-      {favorites.length === 0 ? (
-        <p className="text-gray-500 text-sm">
-          No favorite locations added yet
-        </p>
+    <div className="bg-white rounded-lg shadow p-4 sticky top-20">
+      <h2 className="text-xl font-semibold mb-4">Favorites</h2>
+      {!favorites || favorites.length === 0 ? (
+        <p className="text-gray-500">No favorite locations added yet</p>
       ) : (
-        <div className="space-y-2">
-          {favorites.map((city) => (
-            <div
-              key={city}
-              onClick={() => handleCityClick(city)}
-              className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${
-                selectedCity === city
-                  ? 'bg-pink-100 hover:bg-pink-200'
-                  : 'hover:bg-gray-50'
-              }`}
+        <ul className="space-y-2">
+          {favorites.map((favorite) => (
+            <li
+              key={favorite.id || `${favorite.name}-${favorite.region || ''}`}
+              className="group relative flex items-center p-2 rounded-lg hover:bg-gray-50 
+                       transition-colors"
             >
-              <div className="flex items-center space-x-3">
-                <Sun className={`w-5 h-5 ${
-                  selectedCity === city ? 'text-pink-500' : 'text-gray-400'
-                }`} />
-                <span className={`${
-                  selectedCity === city ? 'text-pink-900' : 'text-gray-700'
-                }`}>
-                  {city}
-                </span>
-              </div>
-              <button
-                onClick={(e) => handleRemove(e, city)}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                aria-label={`Remove ${city} from favorites`}
+              <div 
+                onClick={() => handleFavoriteClick(favorite)}
+                className="flex items-center flex-grow cursor-pointer"
               >
-                <X className="w-4 h-4 text-gray-400 hover:text-red-500" />
+                <MapPin className="w-4 h-4 text-gray-400 mr-2" />
+                <div className="flex flex-col min-w-0">
+                  <span className="font-medium truncate">{favorite.name}</span>
+                  {favorite.region && (
+                    <span className="text-sm text-gray-500 truncate">
+                      {favorite.region}
+                      {favorite.country && `, ${favorite.country}`}
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeFromFavorites(favorite);
+                }}
+                className="opacity-0 group-hover:opacity-100 transition-opacity 
+                         ml-2 p-1 hover:text-red-500 rounded-full hover:bg-red-50"
+                aria-label={`Remove ${favorite.name} from favorites`}
+                disabled={loading}
+              >
+                <X className="w-4 h-4" />
               </button>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-    </aside>
+    </div>
   );
 };
 

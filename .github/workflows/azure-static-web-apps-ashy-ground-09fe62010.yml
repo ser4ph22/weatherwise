@@ -1,0 +1,86 @@
+name: Azure Static Web Apps CI/CD
+
+on:
+  push:
+    branches:
+      - deployment
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - deployment
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+  
+jobs:
+  build_and_deploy_job:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+      
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          
+      - name: Install Dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          
+      - name: Build
+        run: |
+          pnpm run build
+        env:
+          VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
+          VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
+          VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
+          NODE_ENV: production
+
+      # Create and prepare deployment directory
+      - name: Prepare deployment
+        run: |
+          mkdir deployment
+          cp -r dist/* deployment/
+          cp staticwebapp.config.json deployment/
+          echo "Deployment directory size:"
+          du -sh deployment/
+
+      # Add size check
+      - name: Check deployment size
+        run: |
+          DEPLOY_SIZE=$(du -sb deployment | cut -f1)
+          echo "Deployment size: $DEPLOY_SIZE bytes"
+          if [ $DEPLOY_SIZE -gt 262144000 ]; then
+            echo "Error: Deployment size ($DEPLOY_SIZE bytes) exceeds limit (262144000 bytes)"
+            exit 1
+          fi
+
+      - name: Deploy
+        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "deployment"
+          skip_app_build: true
+          app_artifact_location: ""
+          output_location: ""
+
+      - name: Close Pull Request
+        if: github.event_name == 'pull_request' && github.event.action == 'closed'
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: "close"

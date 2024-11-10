@@ -1,12 +1,4 @@
-# dependencies
-node_modules
-.env
-.env.local
-dist
-dist-ssr
-*.local
-
-# logs
+# Logs
 logs
 *.log
 npm-debug.log*
@@ -14,7 +6,22 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# editor directories and files
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Testing
+coverage
+*.lcov
+
+# Build
+dist
+dist-ssr
+*.local
+deployment
+
+# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -24,3 +31,13 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Temporary files
+*.bak
+.temp
+.cache
