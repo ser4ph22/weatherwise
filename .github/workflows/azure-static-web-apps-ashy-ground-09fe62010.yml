@@ -44,11 +44,28 @@ jobs:
 
       - name: Prepare for Deployment
         run: |
-          mkdir deploy
-          cp -r dist/* deploy/
-          rm -rf *
-          cp -r deploy/* .
-          rm -rf deploy
+          ls -la
+          echo "Current directory contents:"
+          pwd
+          echo "Checking dist directory:"
+          ls -la dist || echo "dist directory not found"
+          
+          if [ -d "dist" ]; then
+            echo "Creating deployment directory..."
+            mkdir -p deploy
+            echo "Copying dist contents..."
+            cp -r dist/* deploy/
+            echo "Removing old files..."
+            find . -maxdepth 1 ! -name 'deploy' ! -name '.' ! -name '..' -exec rm -rf {} +
+            echo "Moving deployment files..."
+            cp -r deploy/* .
+            rm -rf deploy
+            echo "Final directory contents:"
+            ls -la
+          else
+            echo "Error: dist directory not found after build"
+            exit 1
+          fi
 
       - name: Deploy to Azure
         id: builddeploy
