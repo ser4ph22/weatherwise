@@ -44,4 +44,7 @@ pnpm-debug.log*
 /src/assets/originals
 *.backup
 /stats.html
-*_Structure_*.txt
+*_Structure_*.txt# Local development scripts
+*-deploy.ps1
+*-part1.ps1
+test-script.ps1
