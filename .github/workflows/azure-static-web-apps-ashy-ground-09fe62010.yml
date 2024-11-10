@@ -23,7 +23,7 @@ jobs:
           submodules: true
           fetch-depth: 0
       
-      # Setup PNPM with specific version
+      # Setup PNPM with proper caching
       - uses: pnpm/action-setup@v2
         with:
           version: ${{ env.PNPM_VERSION }}
@@ -35,26 +35,42 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
           
-      # Force regenerate lockfile and install dependencies
-      - name: Install Dependencies
+      # Clear caches and install dependencies
+      - name: Clean and Install
         run: |
-          rm -f pnpm-lock.yaml
-          pnpm install --no-frozen-lockfile
-          pnpm install --frozen-lockfile
+          pnpm store prune
+          pnpm install --frozen-lockfile --prefer-offline
           
       # Add build size check
+      - name: Check bundle size
+        run: |
+          echo "Analyzing build size..."
+          du -sh ./node_modules
+          du -sh ./*
+          
+      # Optimize build process
       - name: Build
         run: |
           pnpm run build
-          node scripts/check-build-size.js
+          echo "Build size:"
+          du -sh dist/
         env:
           VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
           VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
           NODE_ENV: production
+          
+      # Add size check before deployment
+      - name: Verify build size
+        run: |
+          BUILD_SIZE=$(du -sb "dist" | cut -f1)
+          if [ $BUILD_SIZE -gt 262144000 ]; then
+            echo "Build size ($BUILD_SIZE bytes) exceeds Azure Static Web Apps limit"
+            exit 1
+          fi
+          echo "Build size ($BUILD_SIZE bytes) is within limits"
 
       - name: Deploy
-        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
@@ -64,10 +80,3 @@ jobs:
           output_location: "dist"
           app_artifact_location: "dist"
           skip_app_build: true
-
-      - name: Close Pull Request
-        if: github.event_name == 'pull_request' && github.event.action == 'closed'
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: "close"
