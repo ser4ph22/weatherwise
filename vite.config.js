@@ -27,12 +27,18 @@ export default defineConfig({
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
           'router-vendor': ['react-router-dom'],
+          'ui-vendor': ['@headlessui/react', 'lucide-react']
         },
       },
     },
     chunkSizeWarningLimit: 1000,
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: ['react', 'react-dom', 'react-router-dom', '@headlessui/react'],
   },
+  resolve: {
+    alias: {
+      '@': '/src'
+    }
+  }
 });

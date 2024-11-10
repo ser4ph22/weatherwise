@@ -23,6 +23,7 @@
     "react-router-dom": "6.20.0",
     "lucide-react": "0.400.0",
     "prop-types": "15.8.1",
+    "@headlessui/react": "^1.7.17",
     "@microsoft/applicationinsights-web": "3.0.4",
     "@microsoft/applicationinsights-react-js": "17.0.3"
   },
