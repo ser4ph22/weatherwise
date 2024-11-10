@@ -25,29 +25,16 @@ jobs:
         with:
           version: 9
           
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-          
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20"
           
-      - name: Install dependencies
+      - name: Clean Install
         run: |
-          pnpm install --prefer-offline
-
+          rm -rf node_modules pnpm-lock.yaml dist
+          pnpm install --no-frozen-lockfile
+        
       - name: Build Application
         env:
           NODE_ENV: production
