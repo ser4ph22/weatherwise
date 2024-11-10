@@ -32,8 +32,7 @@ jobs:
           cache: "pnpm"
           
       - name: Install Dependencies
-        run: |
-          pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
         
       - name: Build Application
         run: pnpm run build
@@ -43,12 +42,13 @@ jobs:
           VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
 
-      - name: Clear Workspace
+      - name: Prepare for Deployment
         run: |
-          shopt -s extglob
-          rm -rf !("dist")
-          mv dist/* .
-          rm -rf dist
+          mkdir deploy
+          cp -r dist/* deploy/
+          rm -rf *
+          cp -r deploy/* .
+          rm -rf deploy
 
       - name: Deploy to Azure
         id: builddeploy
