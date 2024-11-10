@@ -9,7 +9,13 @@
     {
       "route": "/*",
       "serve": "/index.html",
-      "statusCode": 200
+      "statusCode": 200,
+      "headers": {
+        "Content-Security-Policy": "upgrade-insecure-requests",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff"
+      }
     }
   ],
   "navigationFallback": {
