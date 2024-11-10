@@ -1,6 +1,6 @@
 #################################################
 Project Documentation: weatherwise
-Generated: 2024-11-09 16:50:47
+Generated: 2024-11-10 12:25:11
 #################################################
 
 PROJECT STRUCTURE
@@ -9,6 +9,8 @@ PROJECT STRUCTURE
 ├── 📄 .gitignore
 ├── 📄 eslint.config.js
 ├── 📄 index.html
+├── 📄 optimize-deploy.ps1
+├── 📄 optimize-part1.ps1
 ├── 📄 package-lock.json
 ├── 📄 package.json
 ├── 📄 pnpm-lock.yaml
@@ -17,9 +19,10 @@ PROJECT STRUCTURE
 ├── 📄 README.md
 ├── 📄 staticwebapp.config.json
 ├── 📄 tailwind.config.js
+├── 📄 test-script.ps1
 ├── 📄 vite.config.js
-├── 📄 weatherwise_Structure_20241109_104458.txt
-├── 📄 weatherwise_Structure_20241109_163125.txt
+├── 📄 weatherwise_Structure_20241109_165047.txt
+├── 📄 weatherwise_Structure_20241110_115202.txt
 ├── 📁 .github
 │   └── 📁 workflows
 │       ├── 📄 azure-static-web-apps-ashy-ground-09fe62010.yml
@@ -27,6 +30,8 @@ PROJECT STRUCTURE
 │       └── 📄 azure-static-web-apps-deploy.yml
 ├── 📁 public
 │   └── 📄 vite.svg
+├── 📁 scripts
+│   └── 📄 check-build-size.js
 └── 📁 src
     ├── 📄 App.css
     ├── 📄 App.jsx
@@ -72,31 +77,31 @@ Current Branch: deployment
 Remote Origin: https://github.com/ser4ph22/weatherwise.git
 
 Recent Commits:
- - a778dae - ser4ph22, 7 minutes ago : ci: Update GitHub Actions workflow for pnpm and environment variables  - 78b391f - ser4ph22, 24 minutes ago : feat: Implement persistent favorites and fix router issues  - 9d6a8ed - ser4ph22, 5 hours ago : perf: Implement aggressive build optimization  - 9f65882 - ser4ph22, 5 hours ago : chore: Update .gitignore configuration  - f4a6c14 - ser4ph22, 5 hours ago : perf: Optimize build size and configuration
+ - 5ea41fa - ser4ph22, 74 minutes ago : added concurrency control  - 02aab54 - ser4ph22, 89 minutes ago : chore: update gitignore and clean tracked files  - 628fc47 - ser4ph22, 9 hours ago : chore: update static web app configuration  - 5bb4ab5 - ser4ph22, 9 hours ago : fix: simplify build configuration  - f5233a4 - ser4ph22, 9 hours ago : fix: add headlessui dependency and update build configuration
 
 PROJECT STATISTICS
 -----------------
-Total Files: 55
-Total Directories: 16
-Total Size: 2.00 MB
+Total Files: 58
+Total Directories: 17
+Total Size: 1.00 MB
 
 File Types:
   .jsx: 14 files
   .js: 13 files
+  .ps1: 4 files
   .svg: 4 files
   .css: 3 files
   .png: 3 files
   .json: 3 files
   .jpeg: 3 files
-  .yml: 2 files
   .txt: 2 files
+  .yml: 2 files
   .html: 2 files
-  .ps1: 1 files
-  .env: 1 files
-  .gitignore: 1 files
-  .yaml: 1 files
   .md: 1 files
   .backup: 1 files
+  .yaml: 1 files
+  .gitignore: 1 files
+  .env: 1 files
 
 ENVIRONMENT INFORMATION
 ---------------------
