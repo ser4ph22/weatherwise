@@ -20,19 +20,26 @@ jobs:
           submodules: true
           lfs: false
       
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9
-          
-      - name: Setup Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20"
+      
+      - name: Install PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+          run_install: false
           
-      - name: Clean Install
+      - name: Get pnpm store directory
+        shell: bash
         run: |
-          rm -rf node_modules pnpm-lock.yaml dist
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+          
+      - name: Install dependencies
+        shell: bash
+        run: |
+          rm -rf node_modules dist pnpm-lock.yaml
           pnpm install --no-frozen-lockfile
         
       - name: Build Application
@@ -41,7 +48,9 @@ jobs:
           VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
           VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
-        run: pnpm run build
+        run: |
+          pnpm build
+          ls -la dist
           
       - name: Deploy to Azure
         id: builddeploy
