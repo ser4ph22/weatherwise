@@ -24,37 +24,37 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 9
-          run_install: false
+          
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
           
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20"
-          cache: "pnpm"
           
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          pnpm install --no-frozen-lockfile
-        
+          pnpm install --prefer-offline
+
       - name: Build Application
         env:
           NODE_ENV: production
           VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
           VITE_WEATHER_API_BASE_URL: ${{ secrets.VITE_WEATHER_API_BASE_URL }}
           VITE_STORAGE_URL: ${{ secrets.VITE_STORAGE_URL }}
-        run: |
-          pnpm run build
-          
-      - name: List Build Output
-        run: |
-          echo "Build directory contents:"
-          ls -la dist/
-          
-      - name: Move Build Files
-        run: |
-          mv dist/* .
-          rm -rf dist node_modules pnpm-lock.yaml
-          ls -la
+        run: pnpm run build
           
       - name: Deploy to Azure
         id: builddeploy
@@ -65,7 +65,7 @@ jobs:
           action: "upload"
           app_location: "/"
           api_location: ""
-          output_location: ""
+          output_location: "dist"
           skip_app_build: true
           
   close_pull_request_job:
