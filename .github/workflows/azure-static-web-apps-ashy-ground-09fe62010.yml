@@ -8,6 +8,12 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - deployment
+      
+  # Add concurrency control
+concurrency:
+  group: "pages-${{ github.ref }}"
+  cancel-in-progress: true
+
 
 env:
   NODE_VERSION: '20'
