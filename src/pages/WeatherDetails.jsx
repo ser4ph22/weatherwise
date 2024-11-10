@@ -1,183 +1,110 @@
-import PropTypes from 'prop-types';
 import { useWeather } from '../contexts/WeatherContext';
-import WeatherHeader from '../components/WeatherHeader';
-import FavoritesList from '../components/FavoritesList';
-import { 
-  ThermometerIcon,
-  Droplets,
-  Wind,
-  Cloud,
-  Sun,
-  CloudRain,
-  Gauge,
-  Navigation
-} from 'lucide-react';
+import PropTypes from 'prop-types';
 
-const WeatherMetric = ({ icon: Icon, label, value, unit }) => {
-  return (
-    <div className="flex items-start gap-3 bg-transparent">
-      <Icon className="w-5 h-5 text-blue-400 mt-1" />
-      <div>
-        <p className="text-gray-500 text-sm">{label}</p>
-        <p className="text-gray-900 font-medium">
-          {value}
-          {unit && <span className="text-gray-500 text-sm ml-1">{unit}</span>}
-        </p>
-      </div>
-    </div>
-  );
-};
+const WeatherStat = ({ label, value }) => (
+  <div className="bg-gray-50 p-4 rounded-lg">
+    <p className="text-sm text-gray-500">{label}</p>
+    <p className="text-lg font-medium text-gray-900">{value}</p>
+  </div>
+);
 
-WeatherMetric.propTypes = {
-  icon: PropTypes.elementType.isRequired,
+WeatherStat.propTypes = {
   label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  unit: PropTypes.string
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]).isRequired
 };
 
 const WeatherDetails = () => {
-  const { 
-    weatherData, 
-    unit, 
-    isLoading, 
-    favorites,
-    addToFavorites,
-    removeFromFavorites 
-  } = useWeather();
+  const { weatherData, unit, error, addToFavorites, removeFromFavorites, favorites } = useWeather();
 
-  const MainContent = () => {
-    if (isLoading) {
-      return (
-        <div className="animate-pulse space-y-6">
-          <div className="h-32 bg-white/50 rounded-lg mb-6"></div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-20 bg-white/50 rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    if (!weatherData?.current) {
-      return (
-        <div className="text-center text-gray-500">
-          Search for a city to see weather details
-        </div>
-      );
-    }
-
-    const weather = weatherData.current;
-    const locationData = weatherData.location;
-    const locationName = locationData.name;
-    const isInFavorites = favorites.includes(locationName);
-
-    const handleFavoriteToggle = () => {
-      if (isInFavorites) {
-        removeFromFavorites(locationName);
-      } else {
-        addToFavorites(locationName);
-      }
-    };
-
+  if (error) {
     return (
-      <div className="space-y-8">
-        <div className="flex justify-between items-start">
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {locationData.name}, {locationData.region}
-              </h1>
-              <button
-                onClick={handleFavoriteToggle}
-                className={`px-3 py-1 rounded-md transition-all ${
-                  isInFavorites 
-                    ? 'bg-pink-100 text-pink-700 hover:bg-pink-200'
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
-                }`}
-              >
-                {isInFavorites ? 'Remove from Favorites' : 'Add to Favorites'}
-              </button>
-            </div>
-            <p className="text-gray-500">
-              {locationData.country} • Last updated: {weather.last_updated}
-            </p>
-          </div>
-          <div className="text-right">
-            <div className="text-5xl font-bold text-blue-500">
-              {unit === 'C' ? weather.temp_c : weather.temp_f}°{unit}
-            </div>
-            <p className="text-gray-600">{weather.condition.text}</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-8">
-          <WeatherMetric
-            icon={ThermometerIcon}
-            label="Feels Like"
-            value={unit === 'C' ? weather.feelslike_c : weather.feelslike_f}
-            unit={`°${unit}`}
-          />
-          <WeatherMetric
-            icon={Droplets}
-            label="Humidity"
-            value={weather.humidity}
-            unit="%"
-          />
-          <WeatherMetric
-            icon={Wind}
-            label="Wind"
-            value={weather.wind_kph}
-            unit="km/h"
-          />
-          <WeatherMetric
-            icon={Gauge}
-            label="Pressure"
-            value={weather.pressure_mb}
-            unit="mb"
-          />
-          <WeatherMetric
-            icon={CloudRain}
-            label="Precipitation"
-            value={weather.precip_mm}
-            unit="mm"
-          />
-          <WeatherMetric
-            icon={Sun}
-            label="UV Index"
-            value={weather.uv}
-          />
-          <WeatherMetric
-            icon={Navigation}
-            label="Wind Direction"
-            value={weather.wind_dir}
-          />
-          <WeatherMetric
-            icon={Cloud}
-            label="Cloud Cover"
-            value={weather.cloud}
-            unit="%"
-          />
-        </div>
+      <div className="text-center py-8">
+        <p className="text-red-500">{error}</p>
       </div>
     );
+  }
+
+  if (!weatherData) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500">Search for a location to see weather details</p>
+      </div>
+    );
+  }
+
+  const {
+    location: { name, region, country },
+    current: {
+      temp_c,
+      temp_f,
+      condition: { text: conditionText },
+      feelslike_c,
+      feelslike_f,
+      humidity,
+      wind_kph,
+      pressure_mb,
+      precip_mm,
+      uv,
+      wind_dir,
+      cloud
+    }
+  } = weatherData;
+
+  const temp = unit === 'C' ? temp_c : temp_f;
+  const feelsLike = unit === 'C' ? feelslike_c : feelslike_f;
+  const isInFavorites = favorites.includes(name);
+
+  const handleFavoriteToggle = () => {
+    if (isInFavorites) {
+      removeFromFavorites(name);
+    } else {
+      addToFavorites(name);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
-      <WeatherHeader />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Sidebar */}
-          <div className="lg:col-span-3">
-            <FavoritesList />
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold text-gray-900">
+              {name}, {region || country}
+            </h1>
+            <button
+              onClick={handleFavoriteToggle}
+              className={`px-4 py-1 rounded-full text-sm transition-colors ${
+                isInFavorites 
+                  ? 'bg-pink-100 text-pink-600 hover:bg-pink-200'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {isInFavorites ? 'Remove from Favorites' : 'Add to Favorites'}
+            </button>
           </div>
-          
-          {/* Main Content */}
-          <div className="lg:col-span-9">
-            <MainContent />
+          <p className="text-gray-600">
+            Last updated: {new Date().toLocaleString()}
+          </p>
+        </div>
+        <div className="text-4xl font-bold text-blue-600">
+          {temp}°{unit}
+          <div className="text-lg font-normal text-gray-600 text-right">
+            {conditionText}
           </div>
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <WeatherStat label="Feels Like" value={`${feelsLike}°${unit}`} />
+        <WeatherStat label="Humidity" value={`${humidity}%`} />
+        <WeatherStat label="Wind" value={`${wind_kph} km/h`} />
+        <WeatherStat label="Pressure" value={`${pressure_mb} mb`} />
+        <WeatherStat label="Precipitation" value={`${precip_mm} mm`} />
+        <WeatherStat label="UV Index" value={uv} />
+        <WeatherStat label="Wind Direction" value={wind_dir} />
+        <WeatherStat label="Cloud Cover" value={`${cloud}%`} />
       </div>
     </div>
   );
