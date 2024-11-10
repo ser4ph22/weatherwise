@@ -1,32 +1,27 @@
 {
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/images/*", "/css/*", "/js/*", "/*.ico", "/*.png", "/*.svg"]
+  },
+  "mimeTypes": {
+    ".json": "text/json",
+    ".css": "text/css",
+    ".js": "text/javascript",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".ico": "image/x-icon"
+  },
+  "globalHeaders": {
+    "cache-control": "must-revalidate, max-age=86400",
+    "Content-Security-Policy": "default-src 'self' api.weatherapi.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: blob: https:; connect-src 'self' api.weatherapi.com;",
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff"
+  },
   "routes": [
-    {
-      "route": "/assets/*",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
-    },
     {
       "route": "/*",
       "serve": "/index.html",
-      "statusCode": 200,
-      "headers": {
-        "Content-Security-Policy": "upgrade-insecure-requests",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Frame-Options": "DENY",
-        "X-Content-Type-Options": "nosniff"
-      }
+      "statusCode": 200
     }
-  ],
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": ["/assets/*"]
-  },
-  "mimeTypes": {
-    ".json": "text/json"
-  },
-  "platform": {
-    "apiRuntime": "node:18"
-  },
-  "skipBuildDuringDeployment": true
+  ]
 }
