@@ -7,6 +7,8 @@ WeatherWise is an intuitive weather application that provides real-time weather 
 ## Features ✨
 
 - **Real-time Weather Data**: Get current weather conditions for any location
+- **5-Day Weather Forecast**: View upcoming weather with daily breakdowns
+- **Weather Trends**: Visualize temperature trends with interactive graphs
 - **Location Search**: Find weather information by city name, postal code, or coordinates
 - **Favorites System**: Save and quickly access your preferred locations
 - **Temperature Units**: Toggle between Celsius and Fahrenheit
@@ -24,6 +26,8 @@ WeatherWise is an intuitive weather application that provides real-time weather 
 - **Frontend**: React 18.2.0 with Vite
 - **Styling**: TailwindCSS 3.4.1
 - **Routing**: React Router DOM 6.20.0
+- **Charts**: Custom SVG implementations
+- **Icons**: Lucide React
 - **Package Management**: pnpm 9.x
 - **Hosting**: Azure Static Web Apps
 - **CI/CD**: GitHub Actions
@@ -59,7 +63,6 @@ cp .env.example .env
 ```env
 VITE_WEATHER_API_KEY=your_api_key_here
 VITE_WEATHER_API_BASE_URL=https://api.weatherapi.com/v1
-VITE_STORAGE_URL=your_storage_url
 ```
 
 5. Start development server:
@@ -82,7 +85,9 @@ pnpm dev
 weatherwise/
 ├── src/
 │   ├── components/      # React components
-│   ├── contexts/        # React contexts
+│   │   ├── ui/         # Reusable UI components
+│   │   └── weather/    # Weather-specific components
+│   ├── contexts/       # React contexts
 │   ├── hooks/          # Custom hooks
 │   ├── pages/          # Page components
 │   ├── services/       # API services
@@ -90,6 +95,23 @@ weatherwise/
 ├── public/             # Static assets
 └── ...configuration files
 ```
+
+## Features in Detail 🔍
+
+### 5-Day Weather Forecast
+- Daily temperature predictions
+- Weather condition icons
+- Day-by-day breakdown
+- Condition descriptions
+- Unit conversion support
+
+### Weather Trends Visualization
+- Interactive temperature graphs
+- 7-day historical data
+- Smooth curve interpolation
+- Animated data points
+- Real-time unit conversion
+- Grid reference system
 
 ## Deployment 🌐
 
@@ -101,6 +123,7 @@ The application is automatically deployed to Azure Static Web Apps through GitHu
 - Build size optimization for Azure Static Web Apps
 - Asset compression and optimization
 - Deployment size verification
+- SVG optimization for weather icons
 
 ## Security 🔒
 
@@ -108,6 +131,7 @@ The application is automatically deployed to Azure Static Web Apps through GitHu
 - Content Security Policy headers
 - CORS configuration
 - Environment variable protection
+- Rate limiting consideration
 
 ## Contributing 🤝
 
@@ -119,21 +143,31 @@ The application is automatically deployed to Azure Static Web Apps through GitHu
 
 ## Future Plans 🎯
 
-- Weather forecast visualization
-- Historical weather data
 - Weather alerts system
+- Extended forecast details
+- More detailed historical data
 - Enhanced mobile experience
 - Offline support
 - Multiple theme options
+- Location-based alerts
+- Custom dashboard layouts
 
 ## Version History 📝
 
-- **0.1.0** (November 10, 2024)
-  - Initial release
-  - Core weather tracking functionality
-  - Favorites system
-  - Temperature unit conversion
-  - Azure Static Web Apps deployment
+### 0.2.0 (November 10, 2024)
+- Added 5-day weather forecast
+- Implemented weather trends visualization
+- Enhanced data processing
+- Improved UI/UX
+- Added smooth animations
+- Optimized performance
+
+### 0.1.0 (November 10, 2024)
+- Initial release
+- Core weather tracking functionality
+- Favorites system
+- Temperature unit conversion
+- Azure Static Web Apps deployment
 
 ## Support 💬
 
